@@ -18,6 +18,7 @@ func GenerateID() int {
 	fmt.Println("Records length: ", len(records))
 	id := (len(records) - 1) + 1
 
+	file.Close()
 	return id
 }
 

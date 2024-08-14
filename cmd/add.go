@@ -26,28 +26,32 @@ For example:
 todo add Buy Milk.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("add called")
+		headers := []string{"ID", "TODO", "CREATED"}
 
-		file, err := os.OpenFile("todos.csv", os.O_APPEND|os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
-		/*
-			// this defines the header value and data values for the new csv file
-			headers := []string{"ID", "TODO", "CREATED"}
-			w.Write(headers)
-		*/
-
+		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		check(err)
 		defer file.Close()
 
+		fileInfo, err := file.Stat()
+		check(err)
+
 		w := csv.NewWriter(file)
 
+		if fileInfo.Size() == 0 {
+			err = w.Write(headers)
+			check(err)
+			w.Flush()
+			fmt.Println("CSV headers written to the file.")
+		} else {
+			fmt.Println("File already contains data, skipping header writing.")
+		}
 		todo := todo.Todo{ID: utils.GenerateID(), Text: strings.Join(args, ""), Created: time.Now()}
-		record := todo.Slice()
-		w.Write(record)
-
-		// Write any buffered data to the underlying writer (standard output).
+		todoSlice := todo.Slice()
+		err = w.Write(todoSlice)
+		check(err)
 		w.Flush()
 
-		err = w.Error()
-		check(err)
+		fmt.Println("Data written to the CSV file successfully!")
 	},
 }
 
