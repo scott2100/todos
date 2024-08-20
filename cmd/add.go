@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -21,30 +20,16 @@ For example:
 
 todo add Buy Milk.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
-		headers := []string{"ID", "TODO", "CREATED"}
+		//fmt.Println("add called")
 
-		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
 		check(err)
 		defer file.Close()
 
-		fileInfo, err := file.Stat()
-		check(err)
-
 		w := csv.NewWriter(file)
-
-		if fileInfo.Size() == 0 {
-			err = w.Write(headers)
-			check(err)
-			w.Flush()
-			fmt.Println("CSV headers written to the file.")
-		} else {
-			fmt.Println("File already contains data, skipping header writing.")
-		}
-		todo := todo.Todo{ID: utils.GenerateID(), Text: strings.Join(args, ""), Created: time.Now()}
-		todoSlice := todo.Slice()
-		err = w.Write(todoSlice)
-		check(err)
+		todo := todo.Todo{ID: utils.GenerateID(), Description: strings.Join(args, ""), Created: time.Now(), IsComplete: false}
+		fmt.Println("Todo: ", todo)
+		w.Write(todo.Slice())
 		w.Flush()
 
 		fmt.Println("Data written to the CSV file successfully!")
@@ -53,10 +38,4 @@ todo add Buy Milk.`,
 
 func init() {
 	rootCmd.AddCommand(addCmd)
-}
-
-func check(e error) {
-	if e != nil {
-		log.Fatal("error occurred reading csv file: ", e)
-	}
 }

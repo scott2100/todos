@@ -1,5 +1,10 @@
-Just a basic todo list cli app.
+# Todo List CLI Application
 
-Basic functions to add, remove, list and mark completed.
+This is a simple command-line application for managing a to-do list.
 
-Implemented with go.
+## Features:
+- Add, remove, and list tasks
+- Mark tasks as completed
+
+Built with Go.
+

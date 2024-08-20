@@ -1,34 +1,45 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
-
 	"github.com/spf13/cobra"
+	"os"
+	"text/tabwriter"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all todos",
-	Long:  `List all todos.`,
+	Long:  `List all uncompleted todos.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		//log.Println("list called")
+		listAll, err := cmd.Flags().GetBool("all")
+		check(err)
+		file, err := os.Open("todos.csv")
+		check(err)
+		defer file.Close()
+
+		r, err := csv.NewReader(file).ReadAll()
+		check(err)
+
+		w := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', tabwriter.TabIndent)
+		fmt.Fprintln(w, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
+		for _, row := range r[1:] {
+			isComplete := row[3]
+			if isComplete == "false" && !listAll {
+				fmt.Fprint(w, row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\n")
+			} else if listAll {
+				fmt.Fprint(w, row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\n")
+			}
+		}
+
+		w.Flush()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listCmd.PersistentFlags().BoolP("all", "a", false, "List all completed and uncompleted tasks.")
 }

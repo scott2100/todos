@@ -6,11 +6,12 @@ import (
 )
 
 type Todo struct {
-	ID      int
-	Text    string
-	Created time.Time
+	ID          int
+	Description string
+	Created     time.Time
+	IsComplete  bool
 }
 
 func (t Todo) Slice() []string {
-	return []string{strconv.Itoa(t.ID), t.Text, t.Created.Format(time.RFC3339)}
+	return []string{strconv.Itoa(t.ID), t.Description, t.Created.Format(time.RFC3339), strconv.FormatBool(t.IsComplete)}
 }

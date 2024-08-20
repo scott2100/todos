@@ -1,40 +1,45 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
-
 	"github.com/spf13/cobra"
+	"os"
+	"strconv"
+	"strings"
+	"text/tabwriter"
 )
 
-// completedCmd represents the completed command
-var completedCmd = &cobra.Command{
-	Use:   "completed",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+var completeCmd = &cobra.Command{
+	Use:   "complete",
+	Short: "Mark todo as completed",
+	Long:  `Mark todo as completed`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("completed called")
+		fmt.Println("complete called")
+
+		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
+		check(err)
+
+		r, err := csv.NewReader(file).ReadAll()
+		check(err)
+		file.Close()
+
+		file, _ = os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
+		w := csv.NewWriter(file)
+
+		tw := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', tabwriter.TabIndent)
+		fmt.Fprintln(tw, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
+		for _, row := range r[1:] {
+			id := row[0]
+			if id == strings.Join(args, "") {
+				w.Write([]string{row[0], row[1], row[2], strconv.FormatBool(true)})
+			}
+		}
+
+		tw.Flush()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(completedCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// completedCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// completedCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(completeCmd)
 }
