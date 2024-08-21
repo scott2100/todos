@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	"log"
 	"os"
 	"todolist/cmd"
 )
@@ -22,10 +21,4 @@ func main() {
 		w.Flush()
 	}
 	cmd.Execute()
-}
-
-func check(e error) {
-	if e != nil {
-		log.Fatal("error occurred reading csv file: ", e)
-	}
 }

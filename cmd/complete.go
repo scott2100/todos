@@ -1,13 +1,9 @@
 package cmd
 
 import (
-	"encoding/csv"
-	"fmt"
 	"github.com/spf13/cobra"
-	"os"
-	"strconv"
-	"strings"
-	"text/tabwriter"
+	"todolist/todo"
+	"todolist/utils/file"
 )
 
 var completeCmd = &cobra.Command{
@@ -15,28 +11,17 @@ var completeCmd = &cobra.Command{
 	Short: "Mark todo as completed",
 	Long:  `Mark todo as completed`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("complete called")
-
-		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
-		check(err)
-
-		r, err := csv.NewReader(file).ReadAll()
-		check(err)
-		file.Close()
-
-		file, _ = os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
-		w := csv.NewWriter(file)
-
-		tw := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', tabwriter.TabIndent)
-		fmt.Fprintln(tw, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
-		for _, row := range r[1:] {
-			id := row[0]
-			if id == strings.Join(args, "") {
-				w.Write([]string{row[0], row[1], row[2], strconv.FormatBool(true)})
-			}
+		var todos []todo.Todo
+		var rowID string
+		if len(args) > 0 {
+			rowID = args[0]
+		} else {
+			println("No argument provided. You must specify the ID of the task to mark as completed.")
+			return
 		}
 
-		tw.Flush()
+		todos = file.ReadFile(todos, rowID)
+		file.UpdateFile(todos)
 	},
 }
 

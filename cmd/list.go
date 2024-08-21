@@ -25,7 +25,10 @@ var listCmd = &cobra.Command{
 		check(err)
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', tabwriter.TabIndent)
-		fmt.Fprintln(w, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
+
+		if len(r) > 1 {
+			fmt.Fprintln(w, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
+		}
 		for _, row := range r[1:] {
 			isComplete := row[3]
 			if isComplete == "false" && !listAll {
@@ -34,7 +37,6 @@ var listCmd = &cobra.Command{
 				fmt.Fprint(w, row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\n")
 			}
 		}
-
 		w.Flush()
 	},
 }
