@@ -30,7 +30,9 @@ func UpdateFile(todos []todo.Todo) {
 	fmt.Println("Data written to the CSV file successfully!")
 }
 
-func ReadFile(todos []todo.Todo, rowID string) []todo.Todo {
+func ReadFile() []todo.Todo {
+	var todos []todo.Todo
+
 	file, err := os.Open("todos.csv")
 	error.CheckError(err)
 
@@ -47,9 +49,9 @@ func ReadFile(todos []todo.Todo, rowID string) []todo.Todo {
 		isCompleted, err := strconv.ParseBool(row[3])
 		error.CheckError(err)
 
-		if row[0] != rowID {
-			todos = append(todos, todo.Todo{ID: id, Description: row[1], Created: createdTime, IsComplete: isCompleted})
-		}
+		todoToAppend := todo.Todo{ID: id, Description: row[1], Created: createdTime, IsComplete: isCompleted}
+
+		todos = append(todos, todoToAppend)
 	}
 	return todos
 }

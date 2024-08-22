@@ -4,11 +4,12 @@ import (
 	"encoding/csv"
 	"os"
 	"todolist/cmd"
+	"todolist/utils/error"
 )
 
 func main() {
 	file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	check(err)
+	error.CheckError(err)
 	defer file.Close()
 
 	fileInfo, err := file.Stat()

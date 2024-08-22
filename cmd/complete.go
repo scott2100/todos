@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"strconv"
 	"todolist/todo"
 	"todolist/utils/file"
 )
@@ -11,17 +12,26 @@ var completeCmd = &cobra.Command{
 	Short: "Mark todo as completed",
 	Long:  `Mark todo as completed`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var todos []todo.Todo
-		var rowID string
-		if len(args) > 0 {
-			rowID = args[0]
-		} else {
+		var updatedTodos []todo.Todo
+		rowID, err := strconv.Atoi(args[0])
+		check(err)
+
+		if len(args) <= 0 {
 			println("No argument provided. You must specify the ID of the task to mark as completed.")
 			return
 		}
 
-		todos = file.ReadFile(todos, rowID)
-		file.UpdateFile(todos)
+		todos := file.ReadFile()
+
+		for _, currentTodo := range todos {
+			if currentTodo.ID == rowID {
+				currentTodo.IsComplete = true
+			}
+			updatedTodos = append(updatedTodos, todo.Todo{ID: currentTodo.ID, Description: currentTodo.Description,
+				Created: currentTodo.Created, IsComplete: currentTodo.IsComplete})
+		}
+
+		file.UpdateFile(updatedTodos)
 	},
 }
 
