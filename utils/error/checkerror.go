@@ -2,8 +2,8 @@ package error
 
 import "log"
 
-func CheckError(e error) {
+func HandleError(e error) {
 	if e != nil {
-		log.Fatal("error occurred reading csv file: ", e)
+		log.Fatalln("Error occurred reading csv file: ", e)
 	}
 }

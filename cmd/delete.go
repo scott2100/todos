@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"strconv"
 	"todolist/todo"
+	"todolist/utils/error"
 	"todolist/utils/file"
 )
 
@@ -20,7 +21,7 @@ var deleteCmd = &cobra.Command{
 		}
 
 		rowIDToRemove, err := strconv.Atoi(args[0])
-		check(err)
+		error.HandleError(err)
 
 		todos := file.ReadFile()
 

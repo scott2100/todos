@@ -8,6 +8,7 @@ import (
 	"time"
 	"todolist/todo"
 	"todolist/utils"
+	"todolist/utils/error"
 )
 
 var addCmd = &cobra.Command{
@@ -20,7 +21,7 @@ For example:
 todo add Buy Milk.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_APPEND, 0644)
-		check(err)
+		error.HandleError(err)
 		defer file.Close()
 
 		w := csv.NewWriter(file)
