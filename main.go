@@ -1,25 +1,11 @@
 package main
 
 import (
-	"encoding/csv"
-	"os"
 	"todolist/cmd"
-	"todolist/utils/error"
+	"todolist/utils/file"
 )
 
 func main() {
-	file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	error.CheckError(err)
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-
-	w := csv.NewWriter(file)
-
-	headers := []string{"ID", "DESCRIPTION", "CREATED", "COMPLETED"}
-	if fileInfo.Size() == 0 {
-		err = w.Write(headers)
-		w.Flush()
-	}
+	file.WriteHeaders()
 	cmd.Execute()
 }

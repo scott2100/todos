@@ -55,3 +55,19 @@ func ReadFile() []todo.Todo {
 	}
 	return todos
 }
+
+func WriteHeaders() {
+	file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	error.CheckError(err)
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+
+	w := csv.NewWriter(file)
+
+	headers := []string{"ID", "Tasks", "Created", "Completed"}
+	if fileInfo.Size() == 0 {
+		err = w.Write(headers)
+		w.Flush()
+	}
+}

@@ -26,6 +26,6 @@ func init() {
 
 func check(e error) {
 	if e != nil {
-		log.Fatal("error occurred reading csv file: ", e)
+		log.Fatal("Error occurred reading csv file: ", e)
 	}
 }

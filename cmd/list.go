@@ -3,18 +3,18 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/mergestat/timediff"
 	"github.com/spf13/cobra"
 	"os"
 	"text/tabwriter"
+	"time"
 )
 
-// listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all todos",
 	Long:  `List all uncompleted todos.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//log.Println("list called")
 		listAll, err := cmd.Flags().GetBool("all")
 		check(err)
 		file, err := os.Open("todos.csv")
@@ -24,20 +24,27 @@ var listCmd = &cobra.Command{
 		r, err := csv.NewReader(file).ReadAll()
 		check(err)
 
-		w := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', tabwriter.TabIndent)
+		w := tabwriter.NewWriter(os.Stdout, 30, 30, 0, ' ', tabwriter.TabIndent)
 
 		if len(r) > 1 {
-			fmt.Fprintln(w, "ID\tDESCRIPTION\tCREATED\tCOMPLETE\t")
+			_, err := fmt.Fprintln(w, "ID\tTasks\tCreated\tCompleted")
+			check(err)
 		}
 		for _, row := range r[1:] {
 			isComplete := row[3]
+			createdDateTime, err := time.Parse(time.RFC3339, row[2])
+			check(err)
+			createdDateTimeString := timediff.TimeDiff(createdDateTime)
 			if isComplete == "false" && !listAll {
-				fmt.Fprint(w, row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\n")
+				_, err := fmt.Fprint(w, row[0], "\t", row[1], "\t", createdDateTimeString, "\t", row[3], "\n")
+				check(err)
 			} else if listAll {
-				fmt.Fprint(w, row[0], "\t", row[1], "\t", row[2], "\t", row[3], "\n")
+				_, err := fmt.Fprint(w, row[0], "\t", row[1], "\t", createdDateTimeString, "\t", row[3], "\n")
+				check(err)
 			}
 		}
-		w.Flush()
+		err = w.Flush()
+		check(err)
 	},
 }
 

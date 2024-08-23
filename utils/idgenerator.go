@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/csv"
-	"fmt"
 	"log"
 	"os"
 )
@@ -15,7 +14,6 @@ func GenerateID() int {
 	records, err := reader.ReadAll()
 	check(err)
 
-	fmt.Println("Records length: ", len(records))
 	id := (len(records) - 1) + 1
 
 	file.Close()
@@ -24,6 +22,6 @@ func GenerateID() int {
 
 func check(e error) {
 	if e != nil {
-		log.Fatal("error occurred reading csv file: ", e)
+		log.Fatal("Error occurred reading csv file: ", e)
 	}
 }
