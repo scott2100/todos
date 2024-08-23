@@ -1,52 +1,55 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"github.com/mergestat/timediff"
 	"github.com/spf13/cobra"
 	"os"
 	"text/tabwriter"
-	"time"
+	"todolist/todo"
 	"todolist/utils/error"
+	"todolist/utils/file"
 )
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all todos",
 	Long:  `List all uncompleted todos.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		listAll, err := cmd.Flags().GetBool("all")
-		error.HandleError(err)
-		file, err := os.Open("todos.csv")
-		error.HandleError(err)
-		defer file.Close()
+	Run:   listTodos,
+}
 
-		r, err := csv.NewReader(file).ReadAll()
-		error.HandleError(err)
+func listTodos(cmd *cobra.Command, args []string) {
+	listAll, err := cmd.Flags().GetBool("all")
+	error.HandleError(err)
+	todosList := file.ReadFile()
 
-		w := tabwriter.NewWriter(os.Stdout, 30, 30, 0, ' ', tabwriter.TabIndent)
+	w := tabwriter.NewWriter(os.Stdout, 30, 30, 0, ' ', tabwriter.TabIndent)
+	defer w.Flush()
 
-		if len(r) > 1 {
-			_, err := fmt.Fprintln(w, "ID\tTasks\tCreated\tCompleted")
+	if len(todosList) > 1 {
+		printHeader(w)
+	}
+
+	printRows(w, todosList, listAll)
+}
+
+func printRows(w *tabwriter.Writer, todosList []todo.Todo, listAll bool) {
+	for _, t := range todosList {
+		isComplete := t.IsComplete
+		createdDateTimeString := timediff.TimeDiff(t.Created)
+		if isComplete == false && !listAll {
+			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", t.IsComplete, "\n")
+			error.HandleError(err)
+		} else if listAll {
+			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", t.IsComplete, "\n")
 			error.HandleError(err)
 		}
-		for _, row := range r[1:] {
-			isComplete := row[3]
-			createdDateTime, err := time.Parse(time.RFC3339, row[2])
-			error.HandleError(err)
-			createdDateTimeString := timediff.TimeDiff(createdDateTime)
-			if isComplete == "false" && !listAll {
-				_, err := fmt.Fprint(w, row[0], "\t", row[1], "\t", createdDateTimeString, "\t", row[3], "\n")
-				error.HandleError(err)
-			} else if listAll {
-				_, err := fmt.Fprint(w, row[0], "\t", row[1], "\t", createdDateTimeString, "\t", row[3], "\n")
-				error.HandleError(err)
-			}
-		}
-		err = w.Flush()
-		error.HandleError(err)
-	},
+	}
+}
+
+func printHeader(w *tabwriter.Writer) {
+	_, err := fmt.Fprintln(w, file.Header)
+	error.HandleError(err)
 }
 
 func init() {

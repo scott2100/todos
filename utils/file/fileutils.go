@@ -10,6 +10,8 @@ import (
 	"todolist/utils/error"
 )
 
+const Header = "ID\tTasks\tCreated\tCompleted"
+
 func UpdateFile(todos []todo.Todo) {
 	file, err := os.OpenFile("todos.csv", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	error.HandleError(err)
