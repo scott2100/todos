@@ -48,10 +48,10 @@ func ReadFile() []todo.Todo {
 		error.HandleError(err)
 		createdTime, err := time.Parse(time.RFC3339, row[2])
 		error.HandleError(err)
-		isCompleted, err := strconv.ParseBool(row[3])
+		completed, err := time.Parse(time.RFC3339, row[3])
 		error.HandleError(err)
 
-		todoToAppend := todo.Todo{ID: id, Description: row[1], Created: createdTime, IsComplete: isCompleted}
+		todoToAppend := todo.Todo{ID: id, Description: row[1], Created: createdTime, Completed: completed}
 
 		todos = append(todos, todoToAppend)
 	}

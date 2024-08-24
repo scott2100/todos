@@ -28,7 +28,7 @@ var deleteCmd = &cobra.Command{
 		for _, currentTodo := range todos {
 			if currentTodo.ID != rowIDToRemove {
 				updatedTodos = append(updatedTodos, todo.Todo{ID: currentTodo.ID, Description: currentTodo.Description,
-					Created: currentTodo.Created, IsComplete: currentTodo.IsComplete})
+					Created: currentTodo.Created, Completed: currentTodo.Completed})
 			}
 		}
 

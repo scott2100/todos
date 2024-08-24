@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"strconv"
+	"time"
 	"todolist/todo"
 	"todolist/utils/error"
 	"todolist/utils/file"
@@ -26,10 +27,10 @@ var completeCmd = &cobra.Command{
 
 		for _, currentTodo := range todos {
 			if currentTodo.ID == rowID {
-				currentTodo.IsComplete = true
+				currentTodo.Completed = time.Now()
 			}
 			updatedTodos = append(updatedTodos, todo.Todo{ID: currentTodo.ID, Description: currentTodo.Description,
-				Created: currentTodo.Created, IsComplete: currentTodo.IsComplete})
+				Created: currentTodo.Created, Completed: currentTodo.Completed})
 		}
 
 		file.UpdateFile(updatedTodos)

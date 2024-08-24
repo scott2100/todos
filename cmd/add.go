@@ -25,7 +25,7 @@ todo add Buy Milk.`,
 		defer file.Close()
 
 		w := csv.NewWriter(file)
-		todo := todo.Todo{ID: utils.GenerateID(), Description: strings.Join(args, ""), Created: time.Now(), IsComplete: false}
+		todo := todo.Todo{ID: utils.GenerateID(), Description: strings.Join(args, ""), Created: time.Now(), Completed: time.Time{}}
 
 		w.Write(todo.Slice())
 		w.Flush()

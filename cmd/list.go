@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"text/tabwriter"
+	"time"
 	"todolist/todo"
 	"todolist/utils/error"
 	"todolist/utils/file"
@@ -26,7 +27,7 @@ func listTodos(cmd *cobra.Command, args []string) {
 	w := tabwriter.NewWriter(os.Stdout, 30, 30, 0, ' ', tabwriter.TabIndent)
 	defer w.Flush()
 
-	if len(todosList) > 1 {
+	if len(todosList) > 0 {
 		printHeader(w)
 	}
 
@@ -35,13 +36,13 @@ func listTodos(cmd *cobra.Command, args []string) {
 
 func printRows(w *tabwriter.Writer, todosList []todo.Todo, listAll bool) {
 	for _, t := range todosList {
-		isComplete := t.IsComplete
 		createdDateTimeString := timediff.TimeDiff(t.Created)
-		if isComplete == false && !listAll {
-			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", t.IsComplete, "\n")
+		completedDateTimeString := t.Completed.Format(time.RFC822)
+		if t.Completed.IsZero() {
+			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", "Not Complete", "\n")
 			error.HandleError(err)
-		} else if listAll {
-			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", t.IsComplete, "\n")
+		} else if listAll == true {
+			_, err := fmt.Fprint(w, t.ID, "\t", t.Description, "\t", createdDateTimeString, "\t", completedDateTimeString, "\n")
 			error.HandleError(err)
 		}
 	}

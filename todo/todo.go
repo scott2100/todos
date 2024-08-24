@@ -9,9 +9,9 @@ type Todo struct {
 	ID          int
 	Description string
 	Created     time.Time
-	IsComplete  bool
+	Completed   time.Time
 }
 
 func (t Todo) Slice() []string {
-	return []string{strconv.Itoa(t.ID), t.Description, t.Created.Format(time.RFC3339), strconv.FormatBool(t.IsComplete)}
+	return []string{strconv.Itoa(t.ID), t.Description, t.Created.Format(time.RFC3339), t.Completed.Format(time.RFC3339)}
 }
