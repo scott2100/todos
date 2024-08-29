@@ -2,10 +2,10 @@ package main
 
 import (
 	"todolist/cmd"
-	"todolist/utils/file"
+	"todolist/utils/database"
 )
 
 func main() {
-	file.WriteHeaders()
+	database.CreateDatabase()
 	cmd.Execute()
 }
