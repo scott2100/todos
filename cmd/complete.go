@@ -23,7 +23,6 @@ var completeCmd = &cobra.Command{
 		markCompleteSql := `UPDATE todos SET completed = ? where id = ?`
 		statement, err := db.Prepare(markCompleteSql)
 		error.HandleError(err)
-		//completedTime := time.Now().Format(time.RFC822)
 		completedTime := time.Now()
 		_, err = statement.Exec(completedTime, args[0])
 		if err != nil {
@@ -34,30 +33,4 @@ var completeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(completeCmd)
-}
-
-func markCompleteInCSV() {
-	/*
-		var updatedTodos []todo.Todo
-		rowID, err := strconv.Atoi(args[0])
-		error.HandleError(err)
-
-		if len(args) <= 0 {
-			println("No argument provided. You must specify the ID of the task to mark as completed.")
-			return
-		}
-
-		todos := file.ReadFile()
-
-		for _, currentTodo := range todos {
-			if currentTodo.ID == rowID {
-				currentTodo.Completed = time.Now()
-			}
-			updatedTodos = append(updatedTodos, todo.Todo{ID: currentTodo.ID, Description: currentTodo.Description,
-				Created: currentTodo.Created, Completed: currentTodo.Completed})
-		}
-
-		file.UpdateFile(updatedTodos)
-
-	*/
 }

@@ -35,22 +35,3 @@ func init() {
 	deleteCmd.PersistentFlags().BoolP("uncompleted", "u", false, "Remove all uncompleted tasks.")
 	deleteCmd.PersistentFlags().BoolP("all", "a", false, "Delete all tasks.")
 }
-
-func deleteFromCSV() {
-	/*
-		rowIDToRemove, err := strconv.Atoi(args[0])
-		error.HandleError(err)
-
-		todos := file.ReadFile()
-
-		for _, currentTodo := range todos {
-			if currentTodo.ID != rowIDToRemove {
-				updatedTodos = append(updatedTodos, todo.Todo{ID: currentTodo.ID, Description: currentTodo.Description,
-					Created: currentTodo.Created, Completed: currentTodo.Completed})
-			}
-		}
-
-		file.UpdateFile(updatedTodos)
-
-	*/
-}
