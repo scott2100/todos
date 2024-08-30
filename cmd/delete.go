@@ -26,7 +26,6 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-
 	},
 }
 

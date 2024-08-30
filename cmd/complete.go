@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"strconv"
 	"time"
-	"todolist/todo"
+	"todolist/utils/database"
 	"todolist/utils/error"
-	"todolist/utils/file"
 )
 
 var completeCmd = &cobra.Command{
@@ -14,6 +12,32 @@ var completeCmd = &cobra.Command{
 	Short: "Mark todo as completed",
 	Long:  `Mark todo as completed`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) <= 0 {
+			println("No argument provided. You must specify the ID of the task to delete.")
+			return
+		}
+
+		db := database.OpenDBConnection()
+		defer db.Close()
+
+		markCompleteSql := `UPDATE todos SET completed = ? where id = ?`
+		statement, err := db.Prepare(markCompleteSql)
+		error.HandleError(err)
+		//completedTime := time.Now().Format(time.RFC822)
+		completedTime := time.Now()
+		_, err = statement.Exec(completedTime, args[0])
+		if err != nil {
+			return
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(completeCmd)
+}
+
+func markCompleteInCSV() {
+	/*
 		var updatedTodos []todo.Todo
 		rowID, err := strconv.Atoi(args[0])
 		error.HandleError(err)
@@ -34,9 +58,6 @@ var completeCmd = &cobra.Command{
 		}
 
 		file.UpdateFile(updatedTodos)
-	},
-}
 
-func init() {
-	rootCmd.AddCommand(completeCmd)
+	*/
 }

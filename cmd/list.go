@@ -50,9 +50,10 @@ func listTodos(cmd *cobra.Command, args []string) {
 		var created time.Time
 		var completed time.Time
 		row.Scan(&id, &description, &created, &completed)
-		createdDateTimeString := timediff.TimeDiff(created)
 
-		completedDateTimeString := completed.Format(time.RFC822)
+		createdDateTimeString := timediff.TimeDiff(created)
+		completedDateTimeString := completed.Format(time.RFC850)
+
 		if completed.IsZero() {
 			completedDateTimeString = "Not Complete"
 			fmt.Fprint(w, id, "\t", description, "\t", createdDateTimeString, "\t", completedDateTimeString, "\n")
